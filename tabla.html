@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Posiciones FPC - Probabilidad "Los 8"</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --qualified-bg: rgba(16, 185, 129, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at top right, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+
+        /* --- TABLE STYLING --- */
+        .table-container {
+            flex: 2;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            font-family: 'Teko', sans-serif;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            padding: 15px 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+        }
+
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        tbody tr:nth-child(-n+8) {
+            background-color: var(--qualified-bg);
+        }
+
+        tbody tr:nth-child(-n+8):hover {
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+
+        tbody tr:nth-child(8) td {
+            border-bottom: 2px dashed var(--accent-green);
+        }
+
+        .team-cell {
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .pos-badge {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        tbody tr:nth-child(-n+8) .pos-badge {
+            background: var(--accent-green);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .col-pts {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+        }
+
+        .col-prob {
+            font-weight: 700;
+        }
+
+        .prob-high {
+            color: var(--accent-green);
+        }
+
+        .prob-med {
+            color: var(--accent-yellow);
+        }
+
+        .prob-low {
+            color: var(--accent-red);
+        }
+
+        /* --- SIMULATOR PANEL --- */
+        .simulator-panel {
+            flex: 1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-heading {
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-yellow);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .match-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .team-select-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select,
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+        }
+
+        select {
+            flex: 1;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        input[type="number"] {
+            width: 60px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .vs-text {
+            text-align: center;
+            font-family: 'Teko', sans-serif;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            margin: 5px 0;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #7dd3fc;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .row-update {
+            animation: highlightUpdate 1s ease;
+        }
+
+        @keyframes highlightUpdate {
+            0% {
+                background-color: rgba(56, 189, 248, 0.4);
+            }
+
+            100% {
+                background-color: transparent;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Clasificación FPC</h1>
+        <div class="subtitle">Datos desde Fecha 10 · Predicción Mágica "Los 8"</div>
+    </div>
+
+    <div class="container">
+        <!-- Table Section -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>POS</th>
+                        <th style="text-align: left;">EQUIPO</th>
+                        <th>PJ</th>
+                        <th title="Ganados">G</th>
+                        <th title="Empatados">E</th>
+                        <th title="Perdidos">P</th>
+                        <th title="Goles a Favor">GF</th>
+                        <th title="Goles en Contra">GC</th>
+                        <th title="Diferencia de Goles">DG</th>
+                        <th>PTS</th>
+                        <th title="Probabilidad simulada de entrar a Los 8">% "LOS 8"</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Javascript populates this -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Simulator Section -->
+        <div class="simulator-panel">
+            <h2 class="panel-heading">Jugar Partido</h2>
+            <div class="match-form">
+                <div class="team-select-group">
+                    <select id="select-home"></select>
+                    <input type="number" id="home-goals" value="0" min="0">
+                </div>
+                <div class="vs-text">VS</div>
+                <div class="team-select-group">
+                    <select id="select-away"></select>
+                    <input type="number" id="away-goals" value="0" min="0">
+                </div>
+                <button class="btn" onclick="playMatch()">Registrar Resultado ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const MAGIC_NUMBER = 29;
+        const TOTAL_MATCHES = 19;
+
+        // Data from Matchday 10, including postponed match fixes
+        let teams = [
+            { id: 'ONC', name: 'Once Caldas', color: '#ffffff', pj: 10, pg: 6, pe: 1, pp: 3, gf: 18, gc: 10, pts: 19 },
+            { id: 'INT', name: 'Inter de Bogotá', color: '#000000', pj: 10, pg: 6, pe: 1, pp: 3, gf: 15, gc: 13, pts: 19 },
+            { id: 'NAL', name: 'Atl. Nacional', color: '#008037', pj: 9, pg: 5, pe: 3, pp: 1, gf: 15, gc: 5, pts: 18 },
+            { id: 'PAS', name: 'Deportivo Pasto', color: '#DA251D', pj: 10, pg: 5, pe: 3, pp: 2, gf: 12, gc: 10, pts: 18 },
+            { id: 'AME', name: 'América de Cali', color: '#E3001B', pj: 9, pg: 5, pe: 1, pp: 3, gf: 14, gc: 5, pts: 16 },
+            { id: 'JUN', name: 'Junior FC', color: '#E3001B', pj: 9, pg: 4, pe: 4, pp: 1, gf: 15, gc: 11, pts: 16 },
+            { id: 'TOL', name: 'Deportes Tolima', color: '#800000', pj: 9, pg: 4, pe: 3, pp: 2, gf: 11, gc: 7, pts: 15 },
+            { id: 'BUC', name: 'Atl. Bucaramanga', color: '#FFD700', pj: 9, pg: 4, pe: 2, pp: 3, gf: 8, gc: 6, pts: 14 },
+            { id: 'FOR', name: 'Fortaleza CEIF', color: '#00BFFF', pj: 9, pg: 4, pe: 2, pp: 3, gf: 9, gc: 8, pts: 14 },
+            { id: 'CAL', name: 'Deportivo Cali', color: '#006B3F', pj: 9, pg: 3, pe: 3, pp: 3, gf: 11, gc: 10, pts: 12 },
+            { id: 'SFE', name: 'Indep. Santa Fe', color: '#E3001B', pj: 8, pg: 3, pe: 2, pp: 3, gf: 8, gc: 7, pts: 11 },
+            { id: 'MIL', name: 'Millonarios', color: '#0033A0', pj: 9, pg: 3, pe: 2, pp: 4, gf: 12, gc: 11, pts: 11 },
+            { id: 'AGU', name: 'Águilas Doradas', color: '#D4AF37', pj: 9, pg: 3, pe: 1, pp: 5, gf: 6, gc: 9, pts: 10 },
+            { id: 'ALI', name: 'Alianza FC', color: '#030b42', pj: 9, pg: 2, pe: 3, pp: 4, gf: 8, gc: 11, pts: 9 },
+            { id: 'ENV', name: 'Envigado FC', color: '#FF6600', pj: 9, pg: 2, pe: 2, pp: 5, gf: 7, gc: 12, pts: 8 },
+            { id: 'JAG', name: 'Jaguares FC', color: '#87CEEB', pj: 9, pg: 1, pe: 3, pp: 5, gf: 6, gc: 11, pts: 6 },
+            { id: 'DIM', name: 'Medellín', color: '#E3001B', pj: 9, pg: 1, pe: 2, pp: 6, gf: 5, gc: 14, pts: 5 },
+            { id: 'PER', name: 'Deportivo Pereira', color: '#FFCD00', pj: 8, pg: 1, pe: 1, pp: 6, gf: 6, gc: 16, pts: 4 },
+            { id: 'PAT', name: 'Patriotas', color: '#c91414', pj: 9, pg: 0, pe: 3, pp: 6, gf: 2, gc: 12, pts: 3 },
+            { id: 'BCH', name: 'Boyacá Chicó', color: '#000000', pj: 9, pg: 0, pe: 2, pp: 7, gf: 4, gc: 16, pts: 2 }
+        ];
+
+        teams.forEach(t => {
+            t.dg = t.gf - t.gc;
+            t.prob = calculateProbability(t);
+        });
+
+        function calculateProbability(team) {
+            const matchesRemaining = TOTAL_MATCHES - team.pj;
+            const maxPointsPossible = team.pts + (matchesRemaining * 3);
+
+            if (maxPointsPossible < MAGIC_NUMBER) return 0;
+            if (team.pts >= MAGIC_NUMBER) return 99.9;
+
+            const pointsNeeded = MAGIC_NUMBER - team.pts;
+            const availablePoints = matchesRemaining * 3;
+
+            const requiredYield = pointsNeeded / availablePoints;
+            let prob = (1 - requiredYield) * 100;
+
+            if (requiredYield > 0.7) prob *= 0.5;
+            if (requiredYield > 0.9) prob *= 0.2;
+
+            return Math.max(0, Math.min(99.9, prob));
+        }
+
+        function sortTeams() {
+            teams.sort((a, b) => {
+                if (b.pts !== a.pts) return b.pts - a.pts;
+                if (b.dg !== a.dg) return b.dg - a.dg;
+                if (b.gf !== a.gf) return b.gf - a.gf;
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        function renderTable(highlightTeams = []) {
+            sortTeams();
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            teams.forEach((team, index) => {
+                const tr = document.createElement('tr');
+                if (highlightTeams.includes(team.id)) {
+                    tr.classList.add('row-update');
+                }
+
+                let probText = team.prob.toFixed(1) + '%';
+                let probClass = 'prob-low';
+                if (team.prob >= 70) probClass = 'prob-high';
+                else if (team.prob >= 35) probClass = 'prob-med';
+
+                tr.innerHTML = `
+                    <td style="width: 50px;">
+                        <div class="pos-badge">${index + 1}</div>
+                    </td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background-color: ${team.color}"></div>
+                        ${team.name}
+                    </td>
+                    <td>${team.pj}</td>
+                    <td>${team.pg}</td>
+                    <td>${team.pe}</td>
+                    <td>${team.pp}</td>
+                    <td>${team.gf}</td>
+                    <td>${team.gc}</td>
+                    <td>${team.dg > 0 ? '+' + team.dg : team.dg}</td>
+                    <td class="col-pts">${team.pts}</td>
+                    <td class="col-prob ${probClass}">${probText}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSelects() {
+            const sHome = document.getElementById('select-home');
+            const sAway = document.getElementById('select-away');
+
+            sHome.innerHTML = '<option value="" disabled selected>Local</option>';
+            sAway.innerHTML = '<option value="" disabled selected>Visitante</option>';
+
+            const sortedForSelect = [...teams].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedForSelect.forEach(team => {
+                sHome.add(new Option(team.name, team.id));
+                sAway.add(new Option(team.name, team.id));
+            });
+        }
+
+        function playMatch() {
+            const homeId = document.getElementById('select-home').value;
+            const awayId = document.getElementById('select-away').value;
+            const homeGoals = parseInt(document.getElementById('home-goals').value);
+            const awayGoals = parseInt(document.getElementById('away-goals').value);
+
+            if (!homeId || !awayId) {
+                alert("Selecciona ambos equipos.");
+                return;
+            }
+            if (homeId === awayId) {
+                alert("Un equipo no puede jugar contra sí mismo.");
+                return;
+            }
+            if (isNaN(homeGoals) || isNaN(awayGoals) || homeGoals < 0 || awayGoals < 0) {
+                alert("Ingresa un número de goles válido (0 o mayor).");
+                return;
+            }
+
+            const home = teams.find(t => t.id === homeId);
+            const away = teams.find(t => t.id === awayId);
+
+            if (home.pj >= 19 || away.pj >= 19) {
+                alert("Uno o ambos equipos ya han jugado 19 partidos (Torneo finalizado para ellos).");
+                return;
+            }
+
+            home.pj++;
+            away.pj++;
+
+            home.gf += homeGoals;
+            home.gc += awayGoals;
+            home.dg = home.gf - home.gc;
+
+            away.gf += awayGoals;
+            away.gc += homeGoals;
+            away.dg = away.gf - away.gc;
+
+            if (homeGoals > awayGoals) {
+                home.pg++; home.pts += 3;
+                away.pp++;
+            } else if (homeGoals < awayGoals) {
+                away.pg++; away.pts += 3;
+                home.pp++;
+            } else {
+                home.pe++; home.pts += 1;
+                away.pe++; away.pts += 1;
+            }
+
+            home.prob = calculateProbability(home);
+            away.prob = calculateProbability(away);
+
+            renderTable([homeId, awayId]);
+
+            document.getElementById('home-goals').value = 0;
+            document.getElementById('away-goals').value = 0;
+
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            populateSelects();
+        });
+    </script>
+</body>
+
+</html>
