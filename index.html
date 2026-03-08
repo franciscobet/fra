@@ -3,333 +3,279 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Marcador FPC - Estilo Premier League</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Posiciones FPC - Probabilidad "Los 8"</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Teko:wght@500;600;700&display=swap"
         rel="stylesheet">
     <style>
         :root {
-            /* Premier League classic aesthetic colors */
-            --pl-purple: #38003c;
-            --pl-magenta: #e90052;
-            --pl-cyan: #00ff85;
-            --pl-blue: #04f5ff;
-            --pl-bg: #ececec;
-            --text-dark: #111111;
-            --text-light: #ffffff;
-
-            /* Control Panel */
-            --panel-bg: rgba(20, 20, 30, 0.95);
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-yellow: #fbbf24;
+            --qualified-bg: rgba(16, 185, 129, 0.15);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #2c3e50;
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-dark);
             background-image:
-                linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7)),
-                url('https://images.unsplash.com/photo-1518605368461-1ee7c5320b22?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: var(--text-light);
+                radial-gradient(circle at top right, rgba(56, 189, 248, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
             min-height: 100vh;
+            padding: 40px 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
         }
 
-        /* --- TV BROADCAST GRAPHIC --- */
-        .broadcast-container {
-            width: 100%;
-            height: 35vh;
-            position: relative;
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            padding: 40px;
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .pl-scoreboard {
-            display: flex;
-            align-items: center;
-            font-family: 'Oswald', sans-serif;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border-radius: 4px;
-            overflow: hidden;
-            background: #ffffff;
-            height: 54px;
-            animation: slideDown 1s cubic-bezier(0.19, 1, 0.22, 1);
-        }
-
-        .team-box {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            background: #ffffff;
-            color: var(--pl-purple);
-            font-weight: 700;
-            font-size: 1.8rem;
-            letter-spacing: 1px;
+        h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3.5rem;
             text-transform: uppercase;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }
 
-        .home-team {
-            padding: 0 15px 0 25px;
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
         }
 
-        .away-team {
-            padding: 0 25px 0 15px;
-        }
-
-        /* Animated background pulse for goal */
-        .team-bg-pulse {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--pl-cyan);
-            opacity: 0;
-            z-index: 0;
-        }
-
-        .team-name-text {
-            position: relative;
-            z-index: 1;
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .color-bar {
-            width: 8px;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            z-index: 2;
-        }
-
-        .home-team .color-bar {
-            left: 0;
-        }
-
-        .away-team .color-bar {
-            right: 0;
-        }
-
-        .score-box {
-            background: var(--pl-purple);
-            color: #ffffff;
-            height: 100%;
+        .container {
             display: flex;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 2.2rem;
-            font-weight: 700;
-            position: relative;
-            z-index: 2;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            align-items: flex-start;
         }
 
-        .score-separator {
-            color: var(--pl-magenta);
-            margin: 0 8px;
-            font-size: 1.8rem;
-            transform: translateY(-2px);
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
         }
 
-        .score-number {
-            display: inline-block;
-            min-width: 25px;
+        /* --- TABLE STYLING --- */
+        .table-container {
+            flex: 2;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
             text-align: center;
         }
 
-        .timer-box {
-            background: var(--text-dark);
-            color: #ffffff;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            font-size: 1.6rem;
-            font-weight: 500;
-            border-left: 2px solid rgba(255, 255, 255, 0.1);
-            min-width: 100px;
-            justify-content: center;
-        }
-
-        .timer-accent {
-            color: var(--pl-cyan);
-            margin-left: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        /* Animated Logo Box */
-        .logo-box {
-            background: var(--pl-magenta);
-            height: 100%;
-            width: 50px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
-            position: relative;
-            overflow: hidden;
-            perspective: 1000px;
-        }
-
-        /* 3D Flip Container for Logos */
-        .logo-flipper {
-            width: 30px;
-            height: 30px;
-            position: relative;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-
-        .logo-flipper.flip {
-            transform: rotateY(180deg) scale(1.2);
-        }
-
-        .logo-flipper.flip-back {
-            transform: rotateY(360deg) scale(1);
-        }
-
-        .logo-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Oswald', sans-serif;
-            font-weight: 700;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .logo-front {
-            transform: rotateY(0deg);
-        }
-
-        .logo-front svg {
-            width: 100%;
-            height: 100%;
-            fill: #ffffff;
-        }
-
-        .logo-back {
-            transform: rotateY(180deg);
-            background: var(--pl-purple);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            border: 2px solid white;
-        }
-
-        /* --- CONTROL PANEL --- */
-        .controls-wrapper {
-            background: var(--panel-bg);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%;
-            flex-grow: 1;
-            padding: 30px 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            border-top-left-radius: 30px;
-            border-top-right-radius: 30px;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
-        }
-
-        .controls-header {
-            font-family: 'Oswald', sans-serif;
-            font-size: 2rem;
-            color: var(--pl-cyan);
-            margin-bottom: 25px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .controls-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .team-controls {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .team-label {
-            font-family: 'Oswald', sans-serif;
+        th {
+            font-family: 'Teko', sans-serif;
             font-size: 1.4rem;
-            color: #94a3b8;
+            color: var(--text-muted);
+            padding: 15px 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 500;
+            letter-spacing: 1px;
         }
 
-        select.team-select {
-            width: 100%;
-            padding: 12px 15px;
-            background: #1e293b;
-            color: white;
-            border: 2px solid var(--pl-purple);
-            border-radius: 8px;
-            font-family: 'Roboto', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            outline: none;
-            cursor: pointer;
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+        }
+
+        tr {
             transition: all 0.3s ease;
         }
 
-        select.team-select:focus {
-            border-color: var(--pl-magenta);
-            box-shadow: 0 0 15px rgba(233, 0, 82, 0.3);
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
 
-        .score-buttons {
+        tbody tr:nth-child(-n+8) {
+            background-color: var(--qualified-bg);
+        }
+
+        tbody tr:nth-child(-n+8):hover {
+            background-color: rgba(16, 185, 129, 0.2);
+        }
+
+        tbody tr:nth-child(8) td {
+            border-bottom: 2px dashed var(--accent-green);
+        }
+
+        .team-cell {
+            text-align: left;
             display: flex;
+            align-items: center;
             gap: 15px;
+            font-weight: 700;
+            font-size: 1.1rem;
         }
 
-        .btn {
-            background: #334155;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .team-logo {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .pos-badge {
+            width: 28px;
+            height: 28px;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-width: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            font-family: 'Teko', sans-serif;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        tbody tr:nth-child(-n+8) .pos-badge {
+            background: var(--accent-green);
+            color: #000;
+            font-weight: 700;
+        }
+
+        .col-pts {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--accent-blue);
+        }
+
+        .col-prob {
+            font-weight: 700;
+        }
+
+        .prob-high {
+            color: var(--accent-green);
+        }
+
+        .prob-med {
+            color: var(--accent-yellow);
+        }
+
+        .prob-low {
+            color: var(--accent-red);
+        }
+
+        /* --- SIMULATOR PANEL --- */
+        .simulator-panel {
+            flex: 1;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-heading {
+            font-family: 'Teko', sans-serif;
+            font-size: 2rem;
+            color: var(--accent-yellow);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            text-align: center;
+        }
+
+        .match-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .team-select-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select,
+        input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            outline: none;
+        }
+
+        select {
+            flex: 1;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        input[type="number"] {
+            width: 60px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .vs-text {
+            text-align: center;
+            font-family: 'Teko', sans-serif;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            margin: 5px 0;
+        }
+
+        .btn {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
         }
 
         .btn:hover {
-            background: #475569;
+            background: #7dd3fc;
             transform: translateY(-2px);
         }
 
@@ -337,474 +283,251 @@
             transform: translateY(1px);
         }
 
-        .btn-add {
-            background: var(--pl-purple);
+        .row-update {
+            animation: highlightUpdate 1s ease;
         }
 
-        .btn-add:hover {
-            background: #4a0050;
-        }
-
-        .timer-controls {
-            grid-column: 1 / -1;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .timer-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn-timer {
-            font-size: 1.2rem;
-            padding: 12px 30px;
-            background: var(--pl-magenta);
-        }
-
-        .btn-timer:hover {
-            background: #ff1466;
-        }
-
-        .btn-timer.active {
-            background: #ef4444;
-        }
-
-        .btn-secondary {
-            background: #475569;
-        }
-
-        .btn-secondary:hover {
-            background: #64748b;
-        }
-
-        .settings-row {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .settings-row input {
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: white;
-            padding: 8px;
-            border-radius: 6px;
-            width: 70px;
-            text-align: center;
-            font-size: 1.1rem;
-        }
-
-        /* --- Animations --- */
-        @keyframes slideDown {
-            from {
-                transform: translateY(-50px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        .goal-flash {
-            animation: flashScore 0.8s ease-out;
-        }
-
-        @keyframes flashScore {
+        @keyframes highlightUpdate {
             0% {
-                background: var(--pl-cyan);
-                color: black;
-                transform: scale(1.1);
+                background-color: rgba(56, 189, 248, 0.4);
             }
 
             100% {
-                background: var(--pl-purple);
-                color: white;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes goalPulseName {
-            0% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        @keyframes popScore {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.8);
-                color: var(--pl-cyan);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .animate-pop {
-            animation: popScore 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .animate-bg-pulse {
-            animation: goalPulseName 1.5s ease-out;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .broadcast-container {
-                padding: 20px 10px;
-                justify-content: center;
-            }
-
-            .pl-scoreboard {
-                height: 45px;
-            }
-
-            .team-box {
-                font-size: 1.4rem;
-            }
-
-            .home-team {
-                padding: 0 10px 0 15px;
-            }
-
-            .away-team {
-                padding: 0 15px 0 10px;
-            }
-
-            .score-box {
-                font-size: 1.8rem;
-                padding: 0 15px;
-            }
-
-            .timer-box {
-                font-size: 1.3rem;
-                min-width: 80px;
-            }
-
-            .logo-box {
-                width: 40px;
-            }
-
-            .logo-flipper {
-                width: 25px;
-                height: 25px;
-            }
-
-            .controls-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
+                background-color: transparent;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- TV BROADCAST GRAPHIC -->
-    <div class="broadcast-container">
-        <div class="pl-scoreboard">
-            <!-- Animated Logo Box -->
-            <div class="logo-box">
-                <div class="logo-flipper" id="logo-flipper">
-                    <div class="logo-face logo-front">
-                        <svg viewBox="0 0 24 24">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zM11 19.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.22.23-1.8l3.12 3.12c-.17.65-.11 1.33.22 1.95L5.42 17.4c1.33 1.54 3.28 2.53 5.58 2.53v-5.26l-1-1v4.26zM18.58 6.6L16.4 8.78c-.62-.33-1.3-.39-1.95-.22l2.13-2.13c1.54 1.33 2.53 3.28 2.53 5.58h-5.26l-1 1h4.26c-.49 3.95-3.85 7-7.93 7-.62 0-1.22-.08-1.8-.23l3.12-3.12c.65.17 1.33.11 1.95-.22l2.15 2.15c-1.33-1.54-3.28-2.53-5.58-2.53v5.26l1 1v-4.26c3.95.49 7 3.85 7 7.93 0 .62-.08 1.22-.23 1.8L13.8 19c-.65-.17-1.33-.11-1.95.22l-2.13 2.13c1.33 1.54 3.28 2.53 5.58 2.53h5.26l1-1H11.5z" />
-                        </svg>
-                    </div>
-                    <div class="logo-face logo-back" id="logo-back-text">
-                        GOL
-                    </div>
-                </div>
-            </div>
 
-            <div class="team-box home-team" id="box-1">
-                <div class="team-bg-pulse" id="pulse-1"></div>
-                <div class="color-bar" id="color-1" style="background: #E3001B;"></div>
-                <span class="team-name-text" id="name-1-display">SFE</span>
-            </div>
-
-            <div class="score-box" id="score-container">
-                <span class="score-number" id="score-1-display">0</span>
-                <span class="score-separator">-</span>
-                <span class="score-number" id="score-2-display">0</span>
-            </div>
-
-            <div class="team-box away-team" id="box-2">
-                <div class="team-bg-pulse" id="pulse-2"></div>
-                <div class="color-bar" id="color-2" style="background: #0033A0;"></div>
-                <span class="team-name-text" id="name-2-display">MIL</span>
-            </div>
-
-            <div class="timer-box">
-                <span id="timer-display">00:00</span>
-                <span class="timer-accent" id="period-display"></span>
-            </div>
-        </div>
+    <div class="header">
+        <h1>Clasificación FPC</h1>
+        <div class="subtitle">Datos desde Fecha 10 · Predicción Mágica "Los 8"</div>
     </div>
 
-    <!-- CONTROLLER PANEL -->
-    <div class="controls-wrapper">
-        <h2 class="controls-header">Panel de Transmisión</h2>
+    <div class="container">
+        <!-- Table Section -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>POS</th>
+                        <th style="text-align: left;">EQUIPO</th>
+                        <th>PJ</th>
+                        <th title="Ganados">G</th>
+                        <th title="Empatados">E</th>
+                        <th title="Perdidos">P</th>
+                        <th title="Goles a Favor">GF</th>
+                        <th title="Goles en Contra">GC</th>
+                        <th title="Diferencia de Goles">DG</th>
+                        <th>PTS</th>
+                        <th title="Probabilidad simulada de entrar a Los 8">% "LOS 8"</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Javascript populates this -->
+                </tbody>
+            </table>
+        </div>
 
-        <div class="controls-grid">
-            <div class="team-controls">
-                <div class="team-label">EQUIPO LOCAL</div>
-                <select id="team-1-select" class="team-select" onchange="changeTeam(1)"></select>
-                <div class="score-buttons">
-                    <button class="btn" onclick="updateScore(1, -1)">-</button>
-                    <button class="btn btn-add" onclick="updateScore(1, 1)">+ GOL LOCAL</button>
+        <!-- Simulator Section -->
+        <div class="simulator-panel">
+            <h2 class="panel-heading">Jugar Partido</h2>
+            <div class="match-form">
+                <div class="team-select-group">
+                    <select id="select-home"></select>
+                    <input type="number" id="home-goals" value="0" min="0">
                 </div>
-            </div>
-
-            <div class="team-controls">
-                <div class="team-label">EQUIPO VISITANTE</div>
-                <select id="team-2-select" class="team-select" onchange="changeTeam(2)"></select>
-                <div class="score-buttons">
-                    <button class="btn" onclick="updateScore(2, -1)">-</button>
-                    <button class="btn btn-add" onclick="updateScore(2, 1)">+ GOL VISITA</button>
+                <div class="vs-text">VS</div>
+                <div class="team-select-group">
+                    <select id="select-away"></select>
+                    <input type="number" id="away-goals" value="0" min="0">
                 </div>
-            </div>
-
-            <div class="timer-controls">
-                <div class="team-label">RELOJ DEL PARTIDO</div>
-                <div class="timer-buttons">
-                    <button class="btn btn-timer" id="btn-timer-main" onclick="toggleTimer()">INICIAR</button>
-                    <button class="btn btn-secondary" onclick="resetTimer()">REINICIAR</button>
-                    <button class="btn btn-secondary" onclick="togglePeriod()">CAMBIAR MITAD</button>
-                </div>
-
-                <div class="settings-row">
-                    <label>Ajustar Minutos Manual:</label>
-                    <input type="number" id="manual-mins" value="0" min="0" max="120">
-                    <button class="btn btn-secondary" style="font-size: 1rem; padding: 8px 15px;"
-                        onclick="setManualTime()">FIJAR</button>
-                </div>
+                <button class="btn" onclick="playMatch()">Registrar Resultado ✓</button>
             </div>
         </div>
     </div>
 
     <script>
-        const fpcTeams = [
-            { id: 'AGU', name: 'Águilas Doradas', color: '#D4AF37' },
-            { id: 'ALI', name: 'Alianza FC', color: '#030b42' },
-            { id: 'AME', name: 'América de Cali', color: '#E3001B' },
-            { id: 'BUC', name: 'Atl. Bucaramanga', color: '#FFD700' },
-            { id: 'NAL', name: 'Atl. Nacional', color: '#008037' },
-            { id: 'BCH', name: 'Boyacá Chicó', color: '#000000' },
-            { id: 'TOL', name: 'Dep. Tolima', color: '#800000' },
-            { id: 'CAL', name: 'Deportivo Cali', color: '#006B3F' },
-            { id: 'PAS', name: 'Deportivo Pasto', color: '#DA251D' },
-            { id: 'PER', name: 'Deportivo Pereira', color: '#FFCD00' },
-            { id: 'ENV', name: 'Envigado FC', color: '#FF6600' },
-            { id: 'FOR', name: 'Fortaleza CEIF', color: '#00BFFF' },
-            { id: 'DIM', name: 'Medellín', color: '#E3001B' },
-            { id: 'JAG', name: 'Jaguares FC', color: '#87CEEB' },
-            { id: 'JUN', name: 'Junior FC', color: '#E3001B' },
-            { id: 'EQU', name: 'La Equidad', color: '#00A650' },
-            { id: 'MIL', name: 'Millonarios', color: '#0033A0' },
-            { id: 'ONC', name: 'Once Caldas', color: '#000000' },
-            { id: 'PAT', name: 'Patriotas', color: '#c91414' },
-            { id: 'SFE', name: 'Santa Fe', color: '#E3001B' }
+        const MAGIC_NUMBER = 29;
+        const TOTAL_MATCHES = 19;
+
+        // Data from Matchday 10, including postponed match fixes
+        let teams = [
+            { id: 'ONC', name: 'Once Caldas', color: '#ffffff', pj: 10, pg: 6, pe: 1, pp: 3, gf: 18, gc: 10, pts: 19 },
+            { id: 'INT', name: 'Inter de Bogotá', color: '#000000', pj: 10, pg: 6, pe: 1, pp: 3, gf: 15, gc: 13, pts: 19 },
+            { id: 'NAL', name: 'Atl. Nacional', color: '#008037', pj: 9, pg: 5, pe: 3, pp: 1, gf: 15, gc: 5, pts: 18 },
+            { id: 'PAS', name: 'Deportivo Pasto', color: '#DA251D', pj: 10, pg: 5, pe: 3, pp: 2, gf: 12, gc: 10, pts: 18 },
+            { id: 'AME', name: 'América de Cali', color: '#E3001B', pj: 9, pg: 5, pe: 1, pp: 3, gf: 14, gc: 5, pts: 16 },
+            { id: 'JUN', name: 'Junior FC', color: '#E3001B', pj: 9, pg: 4, pe: 4, pp: 1, gf: 15, gc: 11, pts: 16 },
+            { id: 'TOL', name: 'Deportes Tolima', color: '#800000', pj: 9, pg: 4, pe: 3, pp: 2, gf: 11, gc: 7, pts: 15 },
+            { id: 'BUC', name: 'Atl. Bucaramanga', color: '#FFD700', pj: 9, pg: 4, pe: 2, pp: 3, gf: 8, gc: 6, pts: 14 },
+            { id: 'FOR', name: 'Fortaleza CEIF', color: '#00BFFF', pj: 9, pg: 4, pe: 2, pp: 3, gf: 9, gc: 8, pts: 14 },
+            { id: 'CAL', name: 'Deportivo Cali', color: '#006B3F', pj: 9, pg: 3, pe: 3, pp: 3, gf: 11, gc: 10, pts: 12 },
+            { id: 'SFE', name: 'Indep. Santa Fe', color: '#E3001B', pj: 8, pg: 3, pe: 2, pp: 3, gf: 8, gc: 7, pts: 11 },
+            { id: 'MIL', name: 'Millonarios', color: '#0033A0', pj: 9, pg: 3, pe: 2, pp: 4, gf: 12, gc: 11, pts: 11 },
+            { id: 'AGU', name: 'Águilas Doradas', color: '#D4AF37', pj: 9, pg: 3, pe: 1, pp: 5, gf: 6, gc: 9, pts: 10 },
+            { id: 'ALI', name: 'Alianza FC', color: '#030b42', pj: 9, pg: 2, pe: 3, pp: 4, gf: 8, gc: 11, pts: 9 },
+            { id: 'ENV', name: 'Envigado FC', color: '#FF6600', pj: 9, pg: 2, pe: 2, pp: 5, gf: 7, gc: 12, pts: 8 },
+            { id: 'JAG', name: 'Jaguares FC', color: '#87CEEB', pj: 9, pg: 1, pe: 3, pp: 5, gf: 6, gc: 11, pts: 6 },
+            { id: 'DIM', name: 'Medellín', color: '#E3001B', pj: 9, pg: 1, pe: 2, pp: 6, gf: 5, gc: 14, pts: 5 },
+            { id: 'PER', name: 'Deportivo Pereira', color: '#FFCD00', pj: 8, pg: 1, pe: 1, pp: 6, gf: 6, gc: 16, pts: 4 },
+            { id: 'PAT', name: 'Patriotas', color: '#c91414', pj: 9, pg: 0, pe: 3, pp: 6, gf: 2, gc: 12, pts: 3 },
+            { id: 'BCH', name: 'Boyacá Chicó', color: '#000000', pj: 9, pg: 0, pe: 2, pp: 7, gf: 4, gc: 16, pts: 2 }
         ];
 
-        const select1 = document.getElementById('team-1-select');
-        const select2 = document.getElementById('team-2-select');
-        const flipper = document.getElementById('logo-flipper');
-        const flipperText = document.getElementById('logo-back-text');
-
-        fpcTeams.forEach(team => {
-            let option1 = new Option(`${team.id} - ${team.name}`, team.id);
-            let option2 = new Option(`${team.id} - ${team.name}`, team.id);
-
-            if (team.id === 'SFE') option1.selected = true;
-            if (team.id === 'MIL') option2.selected = true;
-
-            select1.add(option1);
-            select2.add(option2);
+        teams.forEach(t => {
+            t.dg = t.gf - t.gc;
+            t.prob = calculateProbability(t);
         });
 
-        // Track flip state
-        let isFlipped = false;
+        function calculateProbability(team) {
+            const matchesRemaining = TOTAL_MATCHES - team.pj;
+            const maxPointsPossible = team.pts + (matchesRemaining * 3);
 
-        function animateLogo(text, color) {
-            flipperText.innerText = text;
-            flipperText.style.background = color || 'var(--pl-purple)';
+            if (maxPointsPossible < MAGIC_NUMBER) return 0;
+            if (team.pts >= MAGIC_NUMBER) return 99.9;
 
-            if (isFlipped) {
-                flipper.classList.remove('flip');
-                flipper.classList.add('flip-back');
-            } else {
-                flipper.classList.remove('flip-back');
-                flipper.classList.add('flip');
+            const pointsNeeded = MAGIC_NUMBER - team.pts;
+            const availablePoints = matchesRemaining * 3;
+
+            const requiredYield = pointsNeeded / availablePoints;
+            let prob = (1 - requiredYield) * 100;
+
+            if (requiredYield > 0.7) prob *= 0.5;
+            if (requiredYield > 0.9) prob *= 0.2;
+
+            return Math.max(0, Math.min(99.9, prob));
+        }
+
+        function sortTeams() {
+            teams.sort((a, b) => {
+                if (b.pts !== a.pts) return b.pts - a.pts;
+                if (b.dg !== a.dg) return b.dg - a.dg;
+                if (b.gf !== a.gf) return b.gf - a.gf;
+                return a.name.localeCompare(b.name);
+            });
+        }
+
+        function renderTable(highlightTeams = []) {
+            sortTeams();
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            teams.forEach((team, index) => {
+                const tr = document.createElement('tr');
+                if (highlightTeams.includes(team.id)) {
+                    tr.classList.add('row-update');
+                }
+
+                let probText = team.prob.toFixed(1) + '%';
+                let probClass = 'prob-low';
+                if (team.prob >= 70) probClass = 'prob-high';
+                else if (team.prob >= 35) probClass = 'prob-med';
+
+                tr.innerHTML = `
+                    <td style="width: 50px;">
+                        <div class="pos-badge">${index + 1}</div>
+                    </td>
+                    <td class="team-cell">
+                        <div class="team-logo" style="background-color: ${team.color}"></div>
+                        ${team.name}
+                    </td>
+                    <td>${team.pj}</td>
+                    <td>${team.pg}</td>
+                    <td>${team.pe}</td>
+                    <td>${team.pp}</td>
+                    <td>${team.gf}</td>
+                    <td>${team.gc}</td>
+                    <td>${team.dg > 0 ? '+' + team.dg : team.dg}</td>
+                    <td class="col-pts">${team.pts}</td>
+                    <td class="col-prob ${probClass}">${probText}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function populateSelects() {
+            const sHome = document.getElementById('select-home');
+            const sAway = document.getElementById('select-away');
+
+            sHome.innerHTML = '<option value="" disabled selected>Local</option>';
+            sAway.innerHTML = '<option value="" disabled selected>Visitante</option>';
+
+            const sortedForSelect = [...teams].sort((a, b) => a.name.localeCompare(b.name));
+
+            sortedForSelect.forEach(team => {
+                sHome.add(new Option(team.name, team.id));
+                sAway.add(new Option(team.name, team.id));
+            });
+        }
+
+        function playMatch() {
+            const homeId = document.getElementById('select-home').value;
+            const awayId = document.getElementById('select-away').value;
+            const homeGoals = parseInt(document.getElementById('home-goals').value);
+            const awayGoals = parseInt(document.getElementById('away-goals').value);
+
+            if (!homeId || !awayId) {
+                alert("Selecciona ambos equipos.");
+                return;
             }
-            isFlipped = !isFlipped;
-
-            // Reset after a few seconds
-            setTimeout(() => {
-                if (isFlipped) {
-                    flipper.classList.remove('flip');
-                    flipper.classList.add('flip-back');
-                    isFlipped = false;
-                }
-            }, 4000);
-        }
-
-        function changeTeam(teamNum) {
-            const select = document.getElementById(`team-${teamNum}-select`);
-            const selectedId = select.value;
-            const teamData = fpcTeams.find(t => t.id === selectedId);
-
-            document.getElementById(`name-${teamNum}-display`).innerText = teamData.id;
-            document.getElementById(`color-${teamNum}`).style.background = teamData.color;
-        }
-
-        let score1 = 0;
-        let score2 = 0;
-
-        function updateScore(team, change) {
-            const el = document.getElementById(`score-${team}-display`);
-
-            if (team === 1) {
-                if (score1 + change >= 0) {
-                    score1 += change;
-                    el.innerText = score1;
-                    if (change > 0) triggerGoal(1);
-                }
-            } else {
-                if (score2 + change >= 0) {
-                    score2 += change;
-                    el.innerText = score2;
-                    if (change > 0) triggerGoal(2);
-                }
+            if (homeId === awayId) {
+                alert("Un equipo no puede jugar contra sí mismo.");
+                return;
             }
-        }
-
-        function triggerGoal(teamNum) {
-            // Flash center box
-            const box = document.getElementById('score-container');
-            box.classList.remove('goal-flash');
-            void box.offsetWidth;
-            box.classList.add('goal-flash');
-
-            // Pop score number
-            const scoreNum = document.getElementById(`score-${teamNum}-display`);
-            scoreNum.classList.remove('animate-pop');
-            void scoreNum.offsetWidth;
-            scoreNum.classList.add('animate-pop');
-
-            // Pulse team background
-            const pulse = document.getElementById(`pulse-${teamNum}`);
-            pulse.classList.remove('animate-bg-pulse');
-            void pulse.offsetWidth;
-            pulse.classList.add('animate-bg-pulse');
-
-            // Flip logo to show team abbreviation!
-            const select = document.getElementById(`team-${teamNum}-select`);
-            const teamData = fpcTeams.find(t => t.id === select.value);
-            animateLogo(teamData.id, teamData.color);
-
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-        }
-
-        let timerInterval;
-        let isRunning = false;
-        let totalSeconds = 0;
-        let isSecondHalf = false;
-
-        const timerDisplay = document.getElementById('timer-display');
-        const periodDisplay = document.getElementById('period-display');
-        const btnTimerMain = document.getElementById('btn-timer-main');
-        const manualMinsInput = document.getElementById('manual-mins');
-
-        function formatTime(seconds) {
-            const m = Math.floor(seconds / 60);
-            const s = seconds % 60;
-            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        }
-
-        function updateDisplayTime() {
-            timerDisplay.innerText = formatTime(totalSeconds);
-            if (isSecondHalf) {
-                if (Math.floor(totalSeconds / 60) >= 90) {
-                    periodDisplay.innerText = '+' + (Math.floor(totalSeconds / 60) - 90);
-                } else {
-                    periodDisplay.innerText = '';
-                }
-            } else {
-                if (Math.floor(totalSeconds / 60) >= 45) {
-                    periodDisplay.innerText = '+' + (Math.floor(totalSeconds / 60) - 45);
-                } else {
-                    periodDisplay.innerText = '';
-                }
+            if (isNaN(homeGoals) || isNaN(awayGoals) || homeGoals < 0 || awayGoals < 0) {
+                alert("Ingresa un número de goles válido (0 o mayor).");
+                return;
             }
-        }
 
-        function toggleTimer() {
-            if (isRunning) {
-                clearInterval(timerInterval);
-                btnTimerMain.innerText = 'REANUDAR';
-                btnTimerMain.classList.remove('active');
-            } else {
-                timerInterval = setInterval(() => {
-                    totalSeconds++;
-                    updateDisplayTime();
-                }, 1000);
-                btnTimerMain.innerText = 'PAUSAR';
-                btnTimerMain.classList.add('active');
+            const home = teams.find(t => t.id === homeId);
+            const away = teams.find(t => t.id === awayId);
+
+            if (home.pj >= 19 || away.pj >= 19) {
+                alert("Uno o ambos equipos ya han jugado 19 partidos (Torneo finalizado para ellos).");
+                return;
             }
-            isRunning = !isRunning;
+
+            home.pj++;
+            away.pj++;
+
+            home.gf += homeGoals;
+            home.gc += awayGoals;
+            home.dg = home.gf - home.gc;
+
+            away.gf += awayGoals;
+            away.gc += homeGoals;
+            away.dg = away.gf - away.gc;
+
+            if (homeGoals > awayGoals) {
+                home.pg++; home.pts += 3;
+                away.pp++;
+            } else if (homeGoals < awayGoals) {
+                away.pg++; away.pts += 3;
+                home.pp++;
+            } else {
+                home.pe++; home.pts += 1;
+                away.pe++; away.pts += 1;
+            }
+
+            home.prob = calculateProbability(home);
+            away.prob = calculateProbability(away);
+
+            renderTable([homeId, awayId]);
+
+            document.getElementById('home-goals').value = 0;
+            document.getElementById('away-goals').value = 0;
+
+            if (navigator.vibrate) navigator.vibrate(50);
         }
 
-        function resetTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            totalSeconds = isSecondHalf ? 45 * 60 : 0;
-            updateDisplayTime();
-            btnTimerMain.innerText = 'INICIAR';
-            btnTimerMain.classList.remove('active');
-            manualMinsInput.value = isSecondHalf ? 45 : 0;
-        }
-
-        function togglePeriod() {
-            isSecondHalf = !isSecondHalf;
-            resetTimer();
-        }
-
-        function setManualTime() {
-            const mins = parseInt(manualMinsInput.value) || 0;
-            totalSeconds = mins * 60;
-            updateDisplayTime();
-        }
-
-        changeTeam(1);
-        changeTeam(2);
-        updateDisplayTime();
-
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable();
+            populateSelects();
+        });
     </script>
 </body>
 
