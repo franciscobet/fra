@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Marcador de Fútbol Premium</title>
+    <meta name="description" content="Marcador de fútbol estilo transmisión televisiva.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800;900&family=Teko:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.85);
+            --panel-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent-color: #38bdf8;
+
+            /* Team Colors */
+            --team-1-primary: #ef4444;
+            /* Red */
+            --team-1-secondary: #7f1d1d;
+            --team-2-primary: #3b82f6;
+            /* Blue */
+            --team-2-secondary: #1e3a8a;
+
+            --score-bg: #000000;
+            --timer-bg: #fbbf24;
+            --timer-text: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+                linear-gradient(rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.9)),
+                url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="100" fill="none" stroke="%23334155" stroke-width="0.5" stroke-dasharray="2 2"/></svg>');
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .app-header h1 {
+            font-family: 'Teko', sans-serif;
+            font-size: 3.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        /* --- SCOREBOARD TV GRAPHIC --- */
+        .scoreboard-graphic {
+            display: flex;
+            align-items: stretch;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            margin-bottom: 50px;
+            animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--panel-border);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .team-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .team-1::before {
+            background: linear-gradient(135deg, var(--team-1-primary), var(--team-1-secondary));
+        }
+
+        .team-2::before {
+            background: linear-gradient(135deg, var(--team-2-secondary), var(--team-2-primary));
+        }
+
+        .team-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .team-name-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            padding: 5px;
+            margin-bottom: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .team-name-input:focus {
+            outline: none;
+            border-bottom-color: white;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+
+        /* Score & Timer Center Section */
+        .center-section {
+            display: flex;
+            background: var(--score-bg);
+            z-index: 5;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            padding: 0 25px;
+        }
+
+        .score-number {
+            font-family: 'Teko', sans-serif;
+            font-size: 6rem;
+            font-weight: 700;
+            line-height: 1;
+            color: white;
+            width: 60px;
+            text-align: center;
+        }
+
+        .score-divider {
+            font-family: 'Teko', sans-serif;
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin: 0 15px;
+            padding-bottom: 10px;
+        }
+
+        .timer-display {
+            background: var(--timer-bg);
+            color: var(--timer-text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 20px;
+            font-family: 'Teko', sans-serif;
+            min-width: 120px;
+        }
+
+        .time {
+            font-size: 3.5rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 1px;
+        }
+
+        .half-indicator {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: -5px;
+        }
+
+        /* --- CONTROLS PANEL --- */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .control-panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 10px;
+        }
+
+        .score-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-score {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            font-size: 2rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #7dd3fc;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        /* Timer Controls Specific */
+        .timer-controls-panel {
+            grid-column: 1 / -1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .timer-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-timer {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 120px;
+        }
+
+        .timer-settings {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .timer-settings input {
+            background: transparent;
+            border: 1px solid var(--panel-border);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            width: 60px;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .goal-animation {
+            animation: goalPulse 0.5s ease-in-out;
+        }
+
+        @keyframes goalPulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.3);
+                color: var(--timer-bg);
+                text-shadow: 0 0 20px var(--timer-bg);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .scoreboard-graphic {
+                flex-direction: column;
+            }
+
+            .center-section {
+                flex-direction: row;
+                justify-content: center;
+                border-top: 2px solid #222;
+                border-bottom: 2px solid #222;
+            }
+
+            .score-number {
+                font-size: 5rem;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timer-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-header">
+        <h1>Marcador Liga Vibe</h1>
+    </div>
+
+    <!-- MAIN SCOREBOARD GRAPHIC -->
+    <div class="scoreboard-graphic">
+        <!-- Team 1 -->
+        <div class="team-box team-1">
+            <div class="team-content">
+                <input type="text" class="team-name-input" id="name-1" value="LOCAL" maxlength="15"
+                    aria-label="Nombre Equipo Local">
+            </div>
+        </div>
+
+        <!-- Center Score -->
+        <div class="center-section">
+            <div class="score-display">
+                <span class="score-number" id="score-1">0</span>
+                <span class="score-divider">-</span>
+                <span class="score-number" id="score-2">0</span>
+            </div>
+            <div class="timer-display">
+                <span class="time" id="timer-text">00:00</span>
+                <span class="half-indicator" id="period-text">1T</span>
+            </div>
+        </div>
+
+        <!-- Team 2 -->
+        <div class="team-box team-2">
+            <div class="team-content">
+                <input type="text" class="team-name-input" id="name-2" value="VISITA" maxlength="15"
+                    aria-label="Nombre Equipo Visitante">
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls-grid">
+        <!-- Team 1 Controls -->
+        <div class="control-panel">
+            <div class="panel-title">Goles Local</div>
+            <div class="score-controls">
+                <button class="btn btn-score" onclick="updateScore(1, -1)">-</button>
+                <button class="btn btn-score btn-primary" onclick="updateScore(1, 1)">+</button>
+            </div>
+        </div>
+
+        <!-- Team 2 Controls -->
+        <div class="control-panel">
+            <div class="panel-title">Goles Visita</div>
+            <div class="score-controls">
+                <button class="btn btn-score" onclick="updateScore(2, -1)">-</button>
+                <button class="btn btn-score btn-primary" onclick="updateScore(2, 1)">+</button>
+            </div>
+        </div>
+
+        <!-- Timer Controls -->
+        <div class="control-panel timer-controls-panel">
+            <div class="panel-title">Control de Tiempo</div>
+            <div class="timer-actions">
+                <button class="btn btn-timer btn-primary" id="btn-start" onclick="toggleTimer()">Iniciar</button>
+                <button class="btn btn-timer" onclick="resetTimer()">Reiniciar</button>
+                <button class="btn btn-timer" onclick="togglePeriod()" id="btn-period">Cambiar a 2T</button>
+            </div>
+
+            <div class="timer-settings">
+                <label for="minutes-input">Minutos por tiempo:</label>
+                <input type="number" id="minutes-input" value="45" min="1" max="90" onchange="updateDuration()">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Score Logic
+        let score1 = 0;
+        let score2 = 0;
+
+        function updateScore(team, change) {
+            if (team === 1) {
+                if (score1 + change >= 0) {
+                    score1 += change;
+                    const el = document.getElementById('score-1');
+                    el.innerText = score1;
+                    if (change > 0) triggerGoalAnimation(el);
+                }
+            } else {
+                if (score2 + change >= 0) {
+                    score2 += change;
+                    const el = document.getElementById('score-2');
+                    el.innerText = score2;
+                    if (change > 0) triggerGoalAnimation(el);
+                }
+            }
+            if (navigator.vibrate) navigator.vibrate(50);
+        }
+
+        function triggerGoalAnimation(element) {
+            element.classList.remove('goal-animation');
+            void element.offsetWidth; // trigger reflow
+            element.classList.add('goal-animation');
+        }
+
+        // Timer Logic
+        let timerInterval;
+        let isRunning = false;
+        let totalSeconds = 0;
+        let baseMinutes = 45;
+        let isSecondHalf = false;
+
+        const timerText = document.getElementById('timer-text');
+        const btnStart = document.getElementById('btn-start');
+        const periodText = document.getElementById('period-text');
+        const btnPeriod = document.getElementById('btn-period');
+        const minutesInput = document.getElementById('minutes-input');
+
+        function formatTime(seconds) {
+            // Include base minutes if it's second half
+            let displaySeconds = seconds;
+            if (isSecondHalf) {
+                displaySeconds += (baseMinutes * 60);
+            }
+
+            const m = Math.floor(displaySeconds / 60);
+            const s = displaySeconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimerDisplay() {
+            timerText.innerText = formatTime(totalSeconds);
+        }
+
+        function toggleTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                btnStart.innerText = 'Reanudar';
+                btnStart.classList.remove('btn-danger');
+                btnStart.classList.add('btn-primary');
+            } else {
+                timerInterval = setInterval(() => {
+                    totalSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+                btnStart.innerText = 'Pausar';
+                btnStart.classList.remove('btn-primary');
+                btnStart.classList.add('btn-danger');
+            }
+            isRunning = !isRunning;
+            if (navigator.vibrate) navigator.vibrate(30);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            totalSeconds = 0;
+            updateTimerDisplay();
+            btnStart.innerText = 'Iniciar';
+            btnStart.classList.remove('btn-danger');
+            btnStart.classList.add('btn-primary');
+            if (navigator.vibrate) navigator.vibrate([30, 30]);
+        }
+
+        function updateDuration() {
+            baseMinutes = parseInt(minutesInput.value) || 45;
+            updateTimerDisplay();
+        }
+
+        function togglePeriod() {
+            isSecondHalf = !isSecondHalf;
+            if (isSecondHalf) {
+                periodText.innerText = '2T';
+                btnPeriod.innerText = 'Cambiar a 1T';
+            } else {
+                periodText.innerText = '1T';
+                btnPeriod.innerText = 'Cambiar a 2T';
+            }
+            resetTimer(); // Reset clock for new half
+        }
+
+        // Custom Team Inputs - Auto scale font size based on length
+        const inputs = document.querySelectorAll('.team-name-input');
+        inputs.forEach(input => {
+            input.addEventListener('input', function () {
+                if (this.value.length > 10) {
+                    this.style.fontSize = '1.5rem';
+                } else {
+                    this.style.fontSize = '2rem';
+                }
+            });
+        });
+
+    </script>
+</body>
+
+</html>
